@@ -6,7 +6,7 @@ username = credentials.email
 password = credentials.passwd
 my_name = credentials.my_name
 
-bad_guys = [('Elyorbek Soliev', 'elyorbeksoliev@gmail.com')]
+bad_guys = []
 
 
 def _read_email(email_from):
@@ -37,7 +37,6 @@ def _send_email():
     import smtplib
     from email.message import EmailMessage
 
-    # python -m smtpd -n -c DebuggingServer localhost:1025
     # server = smtplib.SMTP( "localhost", 1025 )
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.login(username, password)
@@ -68,5 +67,5 @@ def _send_email():
 
 if __name__ == "__main__":
     from_who = input('Please enter partial or full email [company_name or name@company.com]:')
-    # _read_email(email_from)
+    _read_email(email_from)
     _send_email()
