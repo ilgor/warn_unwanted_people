@@ -42,7 +42,6 @@ def _read_email(email_from):
 
 
 def _send_email(bad_guys):
-    print(bad_guys)
     import smtplib
     from email.message import EmailMessage
 
