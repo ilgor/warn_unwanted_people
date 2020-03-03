@@ -1,39 +1,48 @@
+import os
 import time
 import credentials
-
 
 username = credentials.email
 password = credentials.passwd
 my_name = credentials.my_name
 
-bad_guys = []
+bad_guys = set()
 
 
 def _read_email(email_from):
     import imaplib
 
     server = imaplib.IMAP4_SSL('imap.gmail.com', 993)
-
     server.login(username, password)
-    server.select('INBOX')
 
-    filter_term = f'(FROM "{email_from}")'
-    status, data = server.search(None, filter_term)
+    d = server.list()[1]
 
-    for num in data[0].split():
-      status, data = server.fetch(num, '(BODY[HEADER.FIELDS (FROM)])')
-      bad_guy = (data[0][1]).decode("utf-8")
-      bad_guy = bad_guy.replace('From:', '')
-      bad_guy = bad_guy.strip()
-      full_name, email = bad_guy.split('<')
-      email = email.replace('>', '')
+    for ch in d:
+        folder = ch.decode().split(' "/" ')[1]
+        
+        state, date = server.select(folder)
+        if state == 'NO':
+            continue
 
-      bad_guys.append((full_name, email))
+        print(f'Checking folder: {folder}')
 
-    server.quit()
+        filter_term = f'(FROM "{email_from}")'
+        status, data = server.search(None, filter_term)
+
+        for num in data[0].split():
+            status, data = server.fetch(num, '(BODY[HEADER.FIELDS (FROM)])')
+            bad_guy = (data[0][1]).decode("utf-8")
+            bad_guy = bad_guy.replace('From:', '')
+            bad_guy = bad_guy.strip()
+            full_name, email = bad_guy.split('<')
+            email = email.replace('>', '')
+
+            bad_guys.add((full_name.strip(), email.strip()))
+    return bad_guys
 
 
-def _send_email():
+def _send_email(bad_guys):
+    print(bad_guys)
     import smtplib
     from email.message import EmailMessage
 
@@ -42,8 +51,26 @@ def _send_email():
     server.login(username, password)
 
     email_template = 'email_template.html'
+    tracking_already_sent = 'already_send.txt'
+
+    for i, val in enumerate(bad_guys):
+        print(f'{i}. {val[0]} \t {val[1]}')
+
+    answer = input('Send email all the bad guys(y/n)? ')
+    if (answer.strip().lower() != 'y'):
+        return
+
+    already_notified_people = []
+
+    if os.path.isfile(tracking_already_sent):
+        with open(tracking_already_sent, 'r') as f:
+            for line in f:
+                already_notified_people.append(eval(line.strip()))
 
     for bad_guy in bad_guys:
+        if bad_guy in already_notified_people:
+            print(f'{bad_guy[0]} already been notified!')
+            continue
         bad_guy_name = bad_guy[0]
         bad_guy_email = bad_guy[1] 
         today = time.ctime()
@@ -60,12 +87,17 @@ def _send_email():
         msg['From'] = username
         msg['To'] = bad_guy_email
 
+        print(f'Sending email to: {bad_guy_name}, \t target_email: {bad_guy_email}')
         server.send_message(msg)
+
+        with open(tracking_already_sent, 'a+') as f:
+            f.write(str(bad_guy))
+            f.write('\n')
 
     server.quit()
 
 
 if __name__ == "__main__":
     from_who = input('Please enter partial or full email [company_name or name@company.com]:')
-    _read_email(email_from)
-    _send_email()
+    bad_guys  = _read_email(from_who)
+    _send_email(bad_guys)
