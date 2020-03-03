@@ -52,10 +52,15 @@ def _send_email(bad_guys):
     email_template = 'email_template.html'
     tracking_already_sent = 'already_send.txt'
 
+    print(f'\n Found {len(bad_guys)} bad guys')
+    print('=' * 50)
+    
     for i, val in enumerate(bad_guys):
         print(f'{i}. {val[0]} \t {val[1]}')
 
-    answer = input('Send email all the bad guys(y/n)? ')
+    print('=' * 50)
+
+    answer = input('\nSend email all the bad guys(y/n)? ')
     if (answer.strip().lower() != 'y'):
         return
 
@@ -97,6 +102,7 @@ def _send_email(bad_guys):
 
 
 if __name__ == "__main__":
-    from_who = input('Please enter partial or full email [company_name or name@company.com]:')
+    os.system('clear')
+    from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
     bad_guys  = _read_email(from_who)
     _send_email(bad_guys)
