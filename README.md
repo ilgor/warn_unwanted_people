@@ -2,6 +2,8 @@
 
 This little app will send `CEASE AND DESIST ORDER` email to people who you wish to stop emailing you!
 
+### You dont need virtual environment for this (including Pipenv)
+
 # How To Use
 
 ## Required File
@@ -11,8 +13,6 @@ This little app will send `CEASE AND DESIST ORDER` email to people who you wish 
   - email = 'your_email@gmail.com'
   - passwd = 'your_email_password'
   - my_name = 'Your Fullname'
-
-### You dont need virtual environment for this (including Pipenv)
 
 ## Send email using localhost
 
