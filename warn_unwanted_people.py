@@ -104,5 +104,6 @@ def _send_email(bad_guys):
 if __name__ == "__main__":
     os.system('clear')
     from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
-    bad_guys  = _read_email(from_who)
+    bad_guys = _read_email(from_who)
     _send_email(bad_guys)
+    print('\nDONE!')
