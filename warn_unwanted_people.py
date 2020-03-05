@@ -106,10 +106,10 @@ def _send_email(bad_guys):
 
 if __name__ == "__main__":
     os.system('clear')
-    from_who = sys.argv[1]
+    from_who = sys.argv[1] if len(sys.argv) > 1 else None
     if not from_who:
         from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
-    proceed_without_confirming = sys.argv[2].lower() == '-y'
+    proceed_without_confirming = sys.argv[2].lower() == '-y' if len(sys.argv) > 2 else False
     bad_guys = _read_email(from_who)
     # Uncomment this line to add someone manually
     # bad_guys.add(('John Doe', 'john.doe@companyinc.com'))
