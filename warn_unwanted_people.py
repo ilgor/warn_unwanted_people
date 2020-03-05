@@ -8,7 +8,6 @@ my_name = credentials.my_name
 
 bad_guys = set()
 
-
 def _read_email(email_from):
     import imaplib
 
@@ -62,6 +61,7 @@ def _send_email(bad_guys):
 
     answer = input('\nSend email all the bad guys(y/n)? ')
     if (answer.strip().lower() != 'y'):
+        print('\nNo Warnings Sent!')
         return
 
     already_notified_people = []
@@ -105,5 +105,7 @@ if __name__ == "__main__":
     os.system('clear')
     from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
     bad_guys = _read_email(from_who)
+    # Uncomment this line to add someone manually
+    # bad_guys.add(('John Doe', 'john.doe@companyinc.com'))
     _send_email(bad_guys)
     print('\nDONE!')
