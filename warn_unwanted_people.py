@@ -1,10 +1,12 @@
 import os
+import sys
 import time
 import credentials
 
 username = credentials.email
 password = credentials.passwd
 my_name = credentials.my_name
+proceed_without_confirming = False
 
 bad_guys = set()
 
@@ -59,10 +61,11 @@ def _send_email(bad_guys):
 
     print('=' * 50)
 
-    answer = input('\nSend email all the bad guys(y/n)? ')
-    if (answer.strip().lower() != 'y'):
-        print('\nNo Warnings Sent!')
-        return
+    if not proceed_without_confirming:
+        answer = input('\nSend email all the bad guys(y/n)? ')
+        if (answer.strip().lower() != 'y'):
+            print('\nNo Warnings Sent!')
+            return
 
     already_notified_people = []
 
@@ -103,7 +106,10 @@ def _send_email(bad_guys):
 
 if __name__ == "__main__":
     os.system('clear')
-    from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
+    from_who = sys.argv[1]
+    if not from_who:
+        from_who = input('\nPlease enter partial or full email [company_name or name@company.com]: ')
+    proceed_without_confirming = sys.argv[2].lower() == '-y'
     bad_guys = _read_email(from_who)
     # Uncomment this line to add someone manually
     # bad_guys.add(('John Doe', 'john.doe@companyinc.com'))
